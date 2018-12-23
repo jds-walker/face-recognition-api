@@ -27,8 +27,15 @@ const handleSignin = (db, bcrypt, req, res) => {
     .catch(err => Promise.reject.json('wrong credentials'))
 }
 
-const getAuthTokenID = () => {
-  console.log('auth ok')
+const getAuthTokenID = (req, res) => {
+   const { authorization } = req.headers;
+   return redisClient.get(authorization, (err, reply) => {
+     if (err || !reply ) {
+       return res.status(400).json('Unauthorized');
+     } 
+     return res.json({id: reply})
+   })
+
 }
 
 const signToken = (email) => {
@@ -53,7 +60,7 @@ const createSessions = (user) => {
 const signinAuthentication = (db, bcrypt) => (req, res) => {
   const { authorization } = req.headers;
   return authorization ? 
-  getAuthTokenID() : 
+  getAuthTokenID(req, res) : 
   handleSignin(db, bcrypt, req, res)
     .then(data => {
       return data.id && data.email ? 
