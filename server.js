@@ -5,6 +5,7 @@ const cors = require('cors');
 const knex = require('knex');
 const morgan = require('morgan');
 
+const auth = require('./controllers/authorization')
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
